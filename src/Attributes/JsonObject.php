@@ -9,7 +9,7 @@ use Maris\JsonAnalyzer\Json;
  */
 
 #[Attribute( Attribute::IS_REPEATABLE| Attribute::TARGET_CLASS )]
-readonly class JsonObject
+class JsonObject
 {
 
     public function __construct(
@@ -19,7 +19,7 @@ readonly class JsonObject
          * для формирования обьекта php
          * @var string|null $name
          */
-        public ?string $name = null,
+        public readonly ?string $name = null,
 
         /**
          * Указывает на то что обьект
@@ -30,7 +30,7 @@ readonly class JsonObject
          * одним обьектом
          * @var bool
          */
-        public bool $unique = false,
+        public readonly bool $unique = false,
 
         /**
          * Указывает на то что при привидении к json
@@ -41,11 +41,11 @@ readonly class JsonObject
          * не обрабатываются
          * @var bool
          */
-        public bool $removeEmpty = false,
+        public readonly bool $removeEmpty = false,
 
         /**
          * Пространство имен к которому применяется правило
          */
-        public string $namespace = Json::DEFAULT_NAMESPACE
+        public readonly string $namespace = Json::DEFAULT_NAMESPACE
     ){}
 }

@@ -11,21 +11,21 @@ use Maris\JsonAnalyzer\Json;
  */
 
 #[Attribute(Attribute::IS_REPEATABLE| Attribute::TARGET_PROPERTY| Attribute::TARGET_METHOD| Attribute::TARGET_CLASS_CONSTANT)]
-readonly class JsonIgnore
+class JsonIgnore
 {
     public function __construct(
         /**
          * Не приводит к обьекту
          */
-        public bool $fromJson = true,
+        public readonly bool $fromJson = true,
         /**
          * Не приводить к json строке
          * @var bool
          */
-        public bool $toJson = true,
+        public readonly bool $toJson = true,
         /**
          * Пространство имен к которому применяется правило
          */
-        public string $namespace = Json::DEFAULT_NAMESPACE
+        public readonly string $namespace = Json::DEFAULT_NAMESPACE
     ){}
 }
