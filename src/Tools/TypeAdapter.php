@@ -9,16 +9,16 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 
-readonly class TypeAdapter
+class TypeAdapter
 {
-    private ObjectAnalyzer $analyzer;
-    public ?JsonAdapter $adapter;
+    private readonly ObjectAnalyzer $analyzer;
+    public readonly ?JsonAdapter $adapter;
 
-    public object $handler;
+    public readonly object $handler;
 
-    public ?ReflectionMethod $toJson;
+    public readonly ?ReflectionMethod $toJson;
 
-    public ?ReflectionMethod $fromJson;
+    public readonly ?ReflectionMethod $fromJson;
 
     /**
      * @param object $handler

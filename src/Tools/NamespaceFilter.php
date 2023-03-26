@@ -9,9 +9,9 @@ use ReflectionAttribute;
  */
 
 
-readonly class NamespaceFilter
+class NamespaceFilter
 {
-    protected string $namespace;
+    protected readonly string $namespace;
 
     /**
      * @param string $namespace
