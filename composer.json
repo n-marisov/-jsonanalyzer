@@ -1,0 +1,31 @@
+{
+  "name": "maris/jsonanalyzer",
+  "license": "MIT",
+  "type": "library",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Марисов Николай Андреевич",
+      "email": "marisov123456789@mail.ru"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "psr/log": "*"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "*",
+    "mjaschen/phpgeo": "*",
+    "monolog/monolog": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Maris\\JsonAnalyzer\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": "tests/"
+    }
+  }
+}
