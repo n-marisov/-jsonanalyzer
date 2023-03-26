@@ -2,7 +2,6 @@
   "name": "maris/jsonanalyzer",
   "license": "MIT",
   "type": "library",
-  "minimum-stability": "stable",
   "authors": [
     {
       "name": "Марисов Николай Андреевич",
