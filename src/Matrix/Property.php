@@ -43,6 +43,10 @@ class Property extends ReflectionProperty
      */
     protected readonly Type $type;
 
+    /**
+     * @param ReflectionProperty $property
+     * @param ObjectAnalyzer $analyzer
+     */
     public function __construct( ReflectionProperty $property , ObjectAnalyzer $analyzer )
     {
         $this->analyzer = $analyzer;
@@ -50,7 +54,23 @@ class Property extends ReflectionProperty
         $this->jsonParent = $analyzer->namespaceFilter->filtered( $property->getAttributes(JsonParent::class) );
         $this->jsonProperty = $analyzer->namespaceFilter->filtered($property->getAttributes(JsonProperty::class));
 
-        parent::__construct( $property->class, $property->name );
+        try {
+            parent::__construct( $property->class, $property->name );
+        }catch (ReflectionException $exception){
+            $analyzer->getLogger()->error(JsonDebug::ERROR_CREATE_PROPERTY_MATRIX,[
+                "class" => $property->class,
+                "property"=>$property->name,
+                "namespace"=>$analyzer->namespace,
+                "exception"=>[
+                    "message" => $exception->getMessage(),
+                    "code" => $exception->getCode(),
+                    "trace" => $exception->getTrace()
+                ]
+            ]);
+        }
+
+
+
         $this->type = new Type( $this->getType() );
 
     }

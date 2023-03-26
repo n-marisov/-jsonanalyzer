@@ -27,4 +27,12 @@ class JsonDebug
     const INVALID_RETURNED_TYPE = "Тип возврощаемого значения не может быть \"void\" или \"never\" . Ошибка возникла в классе \"{class}\" в методе \"{method}\". В пространстве имен \"{namespace}\"";
 
     const PROPERTY_NOT_INITIALIZED = "Свойство \"{property}\" не инициализировано. В класе \"{class}\".В пространстве имен \"{namespace}\".";
+
+    const ERROR_CREATE_MATRIX = "Ошибка при создании мартицы обьекта класса \"{class}\". В пространстве имен \"{namespace}\"";
+
+    const ERROR_CREATE_PROPERTY_MATRIX = "Ошибка создания матрицы класса \"{class}\", в свойстве\"{property}\".В пространстве имен \"{namespace}\".";
+
+    const ERROR_CREATE_METHOD_MATRIX = "Ошибка создания матрицы класса \"{class}\", в методе \"{method}\".В пространстве имен \"{namespace}\".";
+
+    const ERROR_CREATE_PARAMETER_MATRIX = "Ошибка создания матрицы класса \"{class}\", в методе \"{method}\" в параметре \"{parameter}\".В пространстве имен \"{namespace}\".";
 }

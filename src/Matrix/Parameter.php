@@ -4,6 +4,7 @@ namespace Maris\JsonAnalyzer\Matrix;
 
 use App\Tests\Pojo\Address;
 use App\Tests\Pojo\Component\Metro;
+use Maris\JsonAnalyzer\Tools\JsonDebug;
 use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use ReflectionException;
 use ReflectionParameter;
@@ -17,11 +18,27 @@ class Parameter extends ReflectionParameter
     public function __construct( ReflectionParameter $parameter, ObjectAnalyzer $analyzer )
     {
         $this->analyzer = $analyzer;
-        parent::__construct( [
-            $parameter->getDeclaringClass()->getName(),
-            $parameter->getDeclaringFunction()->getName()
-        ],
-            $parameter->getName() );
+
+        try {
+            parent::__construct( [
+                $parameter->getDeclaringClass()->getName(),
+                $parameter->getDeclaringFunction()->getName()
+            ],
+                $parameter->getName() );
+        }catch (ReflectionException $exception){
+            $analyzer->getLogger()->error(JsonDebug::ERROR_CREATE_PARAMETER_MATRIX,[
+                "class" => $parameter->getDeclaringClass()->getName(),
+                "method"=>$parameter->getDeclaringFunction()->getName(),
+                "parameter" => $parameter->getName(),
+                "namespace"=>$analyzer->namespace,
+                "exception"=>[
+                    "message" => $exception->getMessage(),
+                    "code" => $exception->getCode(),
+                    "trace" => $exception->getTrace()
+                ]
+            ]);
+        }
+
         $this->type = new Type( $this->getType() );
     }
 

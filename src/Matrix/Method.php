@@ -2,15 +2,14 @@
 
 namespace Maris\JsonAnalyzer\Matrix;
 
-use App\Tests\Pojo\Component\Metro;
-use App\Tests\Pojo\Component\Region;
+
 use Maris\JsonAnalyzer\Attributes\JsonGetter;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonParent;
 use Maris\JsonAnalyzer\Attributes\JsonSetter;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
 use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
-use Maris\JsonAnalyzer\Tools\NamespaceFilter;
+
 use ReflectionException;
 use ReflectionMethod;
 
@@ -51,7 +50,7 @@ class Method extends ReflectionMethod
     protected array $parameters = [];
 
     /**
-     * Тип возврощаемого значения
+     * Тип возвращаемого значения
      * @var Type
      */
     protected Type $returned;
@@ -63,7 +62,21 @@ class Method extends ReflectionMethod
         $this->jsonParent = $analyzer->namespaceFilter->filtered($method->getAttributes(JsonParent::class));
         $this->jsonGetter = $analyzer->namespaceFilter->filtered($method->getAttributes(JsonGetter::class));
         $this->jsonSetter = $analyzer->namespaceFilter->filtered($method->getAttributes(JsonSetter::class));
-        parent::__construct( $method->class, $method->name );
+
+        try {
+            parent::__construct( $method->class, $method->name );
+        }catch (ReflectionException $exception){
+            $analyzer->getLogger()->error(JsonDebug::ERROR_CREATE_METHOD_MATRIX,[
+                "class" => $method->class,
+                "method"=>$method->name,
+                "namespace"=>$analyzer->namespace,
+                "exception"=>[
+                    "message" => $exception->getMessage(),
+                    "code" => $exception->getCode(),
+                    "trace" => $exception->getTrace()
+                ]
+            ]);
+        }
 
         foreach ($this->getParameters() as $parameter)
             $this->parameters[] = new Parameter( $parameter, $analyzer );
