@@ -72,13 +72,24 @@ class Matrix extends ReflectionClass
     /**
      * @param class-string $objectOrClass
      * @param ObjectAnalyzer $analyzer
-     * @throws ReflectionException
      */
     public function __construct( string $objectOrClass , ObjectAnalyzer $analyzer )
     {
         $this->analyzer = $analyzer;
 
-        parent::__construct($objectOrClass);
+        try {
+            parent::__construct($objectOrClass);
+        }catch ( ReflectionException $exception){
+            $analyzer->getLogger()->error(JsonDebug::ERROR_CREATE_MATRIX,[
+                "class" => $objectOrClass,
+                "namespace"=>$analyzer->namespace,
+                "exception"=>[
+                    "message" => $exception->getMessage(),
+                    "code" => $exception->getCode(),
+                    "trace" => $exception->getTrace()
+                ]
+            ]);
+        }
 
         $this->ignore = $analyzer->namespaceFilter->filtered( $this->getAttributes(JsonIgnore::class) );
         $this->jsonObject = $analyzer->namespaceFilter->filtered( $this->getAttributes(JsonObject::class) );
