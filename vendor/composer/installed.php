@@ -3,7 +3,7 @@
         'name' => 'maris/jsonanalyzer',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '8724fd0f565655af5efb7e718bb30338571960ee',
+        'reference' => '15d301b38d7e41f554a23088a4b42c844a247b4a',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'maris/jsonanalyzer' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '8724fd0f565655af5efb7e718bb30338571960ee',
+            'reference' => '15d301b38d7e41f554a23088a4b42c844a247b4a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
