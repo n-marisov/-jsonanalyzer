@@ -23,13 +23,10 @@ use Maris\JsonAnalyzer\Attributes\JsonSetter;
 #[JsonObject(namespace: "CLEAN")]
 class Address
 {
-    #[JsonIgnore(namespace: "SUGGESTIONS")]
-    #[JsonIgnore(namespace: "CLEAN")]
     #[JsonGetter(name:"version",namespace: "SUGGESTIONS")]
     #[JsonGetter(name:"version",namespace: "CLEAN")]
     const VERSION = 1;
 
-   // #[JsonIgnore(namespace: "CLEAN",fromJson: true)]
     #[JsonProperty(name: "source", namespace: "CLEAN")]
     public string $source;
 
