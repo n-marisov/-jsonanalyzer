@@ -2,7 +2,6 @@
 
 namespace Maris\JsonAnalyzer\Matrix;
 
-use App\Tests\Pojo\Component\Region;
 use JetBrains\PhpStorm\Pure;
 use ReflectionIntersectionType as IntersectionType;
 use ReflectionNamedType as NamedType;
@@ -13,6 +12,9 @@ class Type extends ReflectionType
 {
     public readonly ?ReflectionType $type;
 
+    /**
+     * @param ReflectionType|null $type
+     */
     public function __construct( ?ReflectionType $type  )
     {
         $this->type = $type;
@@ -44,38 +46,38 @@ class Type extends ReflectionType
      */
     #[Pure] public function isBuiltin():bool
     {
-        # Тип обьединение не может быть встроеным
+        # Тип объединение не может быть встроенным
         if( is_a($this->type, IntersectionType::class ) ) return false;
         # Тип один, проверяем является ли он встроенным
         if( is_a($this->type, NamedType::class ) )  return $this->type->isBuiltin();
         if( is_a($this->type, UnionType::class ) )  foreach ($this->type->getTypes() as $type){
-            # Если хотябы одит тип не является встроеным то тип не признается встроеным
+            # Если хотя бы один тип не является встроенным, то тип не признается встроенным
             if( !$type->isBuiltin()) return false;
         }
-        # Если тип не обьявлен он может принимать любой встроеный тип
+        # Если тип не объявлен он может принимать любой встроенный тип
         return true;
     }
 
     /**
-     * Определяет наличие скалярных (Встроеных типов)
+     * Определяет наличие скалярных (Встроенных типов)
      * @return bool
      */
     public function issetBuiltin():bool
     {
-        # Тип обьединение не может быть встроеным
+        # Тип объединение не может быть встроенным
         if( is_a($this->type, IntersectionType::class ) ) return false;
         # Тип один, проверяем является ли он встроенным
         if( is_a($this->type, NamedType::class ) )  return $this->type->isBuiltin();
         if( is_a($this->type, UnionType::class ) )  foreach ($this->type->getTypes() as $type){
-            # Если хотябы одит тип является встроеным то тип имеет в всоем составе встроеные типы
+            # Если хотя бы один тип является встроенным, то тип имеет в своем составе встроенные типы
             if( $type->isBuiltin() ) return true;
         }
-        # Если тип не обьявлен он может принимать любой встроеный тип
+        # Если тип не объявлен он может принимать любой встроенный тип
         return false;
     }
 
     /**
-     * Возщврощает массив со всеми встроеными типами
+     * Возвращает массив со всеми встроенными типами
      * @return array<string>
      */
     public function getBuiltins():array
@@ -84,7 +86,7 @@ class Type extends ReflectionType
         # Тип один, проверяем является ли он встроенным
         if( is_a($this->type, NamedType::class ) && $this->type->isBuiltin())  $result[] = $this->type->getName();
         if( is_a($this->type, UnionType::class ) )  foreach ($this->type->getTypes() as $type){
-            # Если хотябы одит тип не является встроеным то тип не признается встроеным
+            # Если хотя бы один тип не является встроенным, то тип не признается встроенным
             if(is_a($type, NamedType::class ) && $type->isBuiltin()) $result[] = $type->getName();
         }
         return $result;
@@ -92,23 +94,23 @@ class Type extends ReflectionType
 
 
     /**
-     * Определяет является ли тип обнуляемым
+     * Определяет, является ли тип обнуляемым
      * @return bool
      */
     public function allowsNull(): bool
     {
-        # Тип обьединение не может быть ,обнуляемым
+        # Тип объединение не может быть, обнуляемым
         if( is_a($this->type, IntersectionType::class ) ) return false;
         if( is_a($this->type, NamedType::class ) ) return $this->type->allowsNull();
         if( is_a($this->type, UnionType::class ))  foreach ($this->type->getTypes() as $type){
-            # Если хотябы одит тип может принять null тип считается обнуляемым
+            # Если хотя бы один тип может принять null тип считается обнуляемым
             if( is_a($type, NamedType::class ) && $type->allowsNull() ) return true;
         }
         return false;
     }
 
     /**
-     * Определяет может ли тип принять данное значение
+     * Определяет, может ли тип принять данное значение
      * @param mixed $value
      * @return bool
      */
@@ -128,22 +130,23 @@ class Type extends ReflectionType
         if( is_a($this->type, IntersectionType::class ) ) {
             return self::allowsValueIntersectionType( $this->type, $value );
         }
-        # Значит свойство не типизировано можно запиать любое значение
+        # Значит свойство не типизировано можно присвоить любое значение
         return true;
     }
 
     /**
      * Определяет доступно ли значение для записи
      * в данный UnionType тип.
-     * Значение считается доступным если если хотя бы
-     * для одного встроеного типа оно считается доступно
-     * @param UnionType $type
+     * Значение считается доступным, если хотя бы
+     * для одного встроенного типа оно считается доступно
+     *
+     * @param UnionType $types
      * @param mixed $value
      * @return bool
      */
-    protected static function allowsValueUnionType(UnionType $types , mixed $value):bool
+    protected static function allowsValueUnionType( UnionType $types , mixed $value ):bool
     {
-        # Если ходябы один тип не удовлеторяет значит значение не является этим типом
+        # Если хотя бы один тип не удовлетворяет значит значение не является этим типом
         foreach ($types->getTypes() as $type)
             if (is_a($type,NamedType::class) && self::allowsValueNamedType($type,$value)) return true;
             elseif (is_a($type,UnionType::class) && self::allowsValueUnionType($type,$value)) return true;
@@ -154,8 +157,8 @@ class Type extends ReflectionType
     /**
      * Определяет доступно ли значение для записи
      * в данный IntersectionType тип
-     * Значение считается доступным если является обьектом
-     * и и наследует все типы обьединнения
+     * Значение считается доступным если является объектом
+     * и наследует все типы объединения
      * @param IntersectionType $types
      * @param mixed $value
      * @return bool
@@ -163,7 +166,7 @@ class Type extends ReflectionType
     protected static function allowsValueIntersectionType( IntersectionType $types , mixed $value ):bool
     {
         if(!is_object($value)) return false;
-        # Если ходябы один тип не удовлеторяет значит значение не является этим типом
+        # Если хотя бы один тип не удовлетворяет значит значение не является этим типом
         foreach ($types->getTypes() as $type)
             if (is_a($type,NamedType::class) && !self::allowsValueNamedType($type,$value)) return false;
             elseif (is_a($type,UnionType::class) && !self::allowsValueUnionType($type,$value)) return false;
@@ -171,11 +174,10 @@ class Type extends ReflectionType
     }
 
     /**
-     * Определяет доступно ли значение для записи
-     * в данный NamedType тип .
-     * Значение считается доступно если оно является сколярным
+     * Определяет доступно ли значение для записи в данный NamedType тип.
+     * Значение считается доступно, если оно является скалярным
      * и название типа соответствует типу значения или
-     * значение обьект и является NamedType или наследует его.
+     * значение объект и является NamedType или наследует его.
      * @param NamedType $type
      * @param mixed $value
      * @return bool
@@ -184,9 +186,9 @@ class Type extends ReflectionType
     {
         if($type->isBuiltin()){
             return match ( $type->getName() ){
-                # Если тип является нумерным (string|int|float) или логическим
+                # Если тип является номерным (string|int|float) или логическим
                 "float","int" => is_numeric($value) || is_bool($value),
-                # Если скаляр или обьект у которого реализован метод __toString()
+                # Если скаляр или объект у которого реализован метод __toString()
                 "string" => is_scalar( $value ) || (is_object($value) && method_exists($value,"__toString")),
                 # К логическому значению можно привести любой тип
                 "bool" => true,
@@ -194,7 +196,7 @@ class Type extends ReflectionType
                 "array" => is_array( $value ),
                 default => false
             };
-            # Если тип не встроеный то обьект. проверяем что
+            # Если тип не встроенный, то объект.
         }else return is_object($value) && is_a( $value, $type->getName() );
     }
 

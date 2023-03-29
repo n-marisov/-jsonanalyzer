@@ -6,7 +6,7 @@ use Maris\JsonAnalyzer\Json;
 
 /***
  * Атрибутом помечаются методы класса
- * которые формируют текущий экземплар
+ * которые формируют текущий экземпляр
  * класса (сетеры)
  */
 #[Attribute( Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD )]
@@ -14,7 +14,7 @@ class JsonSetter
 {
     public function __construct(
         /**
-         * Ключь в json
+         * Ключ в json
          * @var string|null $name
          */
         public ?string $name = null,

@@ -6,7 +6,6 @@ use JetBrains\PhpStorm\Pure;
 use Maris\JsonAnalyzer\Attributes\JsonGetter;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
-use Maris\JsonAnalyzer\Tools\NamespaceFilter;
 use ReflectionClassConstant;
 
 class Constant extends ReflectionClassConstant
@@ -47,7 +46,7 @@ class Constant extends ReflectionClassConstant
     }
 
     /**
-     * Определяет нужно ли печатать обьект
+     * Определяет нужно ли печатать объект
      * @param bool|null $from
      * @param bool|null $to
      * @return bool

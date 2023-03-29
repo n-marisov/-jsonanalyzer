@@ -5,7 +5,7 @@ namespace Maris\JsonAnalyzer\Tools;
 use ReflectionAttribute;
 
 /**
- * Фильтрует обьекты по пространству имен
+ * Фильтрует объекты по пространству имен
  */
 
 

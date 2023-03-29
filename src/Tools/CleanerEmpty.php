@@ -20,8 +20,8 @@ class CleanerEmpty
 
         if( is_array($value) ) {
             $isEmpty = true;
-            foreach ($value as $key => $item)
-                if (!self::isEmpty($value)) $isEmpty = false;
+            foreach ($value as $item)
+                if (!self::isEmpty($item)) $isEmpty = false;
             return $isEmpty;
         }
         return false;

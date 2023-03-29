@@ -15,7 +15,7 @@ class JsonIgnore
 {
     public function __construct(
         /**
-         * Не приводит к обьекту
+         * Не приводит к объекту
          */
         public readonly bool $fromJson = true,
         /**

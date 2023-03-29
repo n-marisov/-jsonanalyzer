@@ -16,7 +16,7 @@ class JsonProperty
 {
     public function __construct(
         /**
-         * Ключь в json
+         * Ключ в json
          * @var string|null $name
          */
         public ?string $name = null,
@@ -28,7 +28,7 @@ class JsonProperty
 
         /**
          * Значение по умолчанию в случае если
-         * значение не удалось вычеслить
+         * значение не удалось вычислить
          * @var mixed|null
          */
         public mixed $default = null,

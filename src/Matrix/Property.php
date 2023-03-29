@@ -2,14 +2,11 @@
 
 namespace Maris\JsonAnalyzer\Matrix;
 
-use JetBrains\PhpStorm\Pure;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonParent;
 use Maris\JsonAnalyzer\Attributes\JsonProperty;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
 use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
-use Maris\JsonAnalyzer\Tools\NamespaceFilter;
-use Maris\JsonAnalyzer\Tools\TypeValidator;
 use ReflectionException;
 use ReflectionProperty;
 
@@ -109,11 +106,10 @@ class Property extends ReflectionProperty
      * @param mixed|null $value
      * @param object|null $parent
      * @return void
-     * @throws ReflectionException
      */
     public function setValue( mixed $objectOrValue, mixed $value = null , ?object $parent = null ): void
     {
-        # Если помечена родителем присваеваем его
+        # Если помечена родителем присваиваем его
         if( isset($this->jsonParent) ){
 
             if(!$this->type->allowsValue($parent))
@@ -174,10 +170,9 @@ class Property extends ReflectionProperty
     }
 
     /**
-     * Возврощает значение свойства
+     * Возвращает значение свойства
      * @param object|null $object
      * @return mixed
-     * @throws ReflectionException
      */
     public function getValue( ?object $object = null ): mixed
     {
@@ -204,7 +199,7 @@ class Property extends ReflectionProperty
     }
 
     /**
-     * Возврощает название ключа в массиве json
+     * Возвращает название ключа в массиве json
      * @return string|null
      */
     public function getJsonName():?string

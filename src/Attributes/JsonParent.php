@@ -5,9 +5,9 @@ use Attribute;
 use Maris\JsonAnalyzer\Json;
 
 /**
- * Атрибутом помечаются свойства и медоды которые должны
+ * Атрибутом помечаются свойства и методы которые должны
  * получить ссылку на родителя для обеспечения навигации
- * по обьекту в стиле DOM дерева.
+ * по объекту в стиле DOM дерева.
  */
 #[Attribute( Attribute::IS_REPEATABLE | Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD )]
 class JsonParent

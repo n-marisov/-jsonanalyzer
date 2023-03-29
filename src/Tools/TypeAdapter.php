@@ -81,13 +81,42 @@ class TypeAdapter
     public function fromJson( mixed $data ):mixed
     {
         if(!isset($this->fromJson)) return null;
-        return $this->fromJson->invoke($this->handler,$data);
+        try {
+            return $this->fromJson->invoke($this->handler,$data);
+        }catch (ReflectionException $exception){
+            $this->analyzer->getLogger()?->warning( JsonDebug::RUNTIME_ADAPTER_EXCEPTION,[
+                "target" => $this->adapter->target,
+                "method"=>__FUNCTION__,
+                "namespace"=>$this->adapter->namespace,
+                "exception" =>[
+                    "message" => $exception->getMessage(),
+                    "code" => $exception->getCode(),
+                    "trace" =>$exception->getTrace()
+                ]
+            ]);
+            return false;
+        }
+
     }
 
     public function toJson( mixed $data ):mixed
     {
         if(!isset($this->toJson)) return null;
-        return $this->toJson->invoke($this->handler,$data);
+        try {
+            return $this->toJson->invoke($this->handler,$data);
+        }catch (ReflectionException $exception){
+            $this->analyzer->getLogger()?->warning( JsonDebug::RUNTIME_ADAPTER_EXCEPTION,[
+                "target" => $this->adapter->target,
+                "method"=>__FUNCTION__,
+                "namespace"=>$this->adapter->namespace,
+                "exception" =>[
+                    "message" => $exception->getMessage(),
+                    "code" => $exception->getCode(),
+                    "trace" =>$exception->getTrace()
+                ]
+            ]);
+            return false;
+        }
     }
 
 
@@ -99,8 +128,14 @@ class TypeAdapter
      */
     public static function newDefaultInstance( object $adapter ):?self
     {
-        $class = new ReflectionClass(self::class);
-        $adapterClass = new ReflectionClass( $adapter );
+        try {
+            $class = new ReflectionClass(self::class);
+            $adapterClass = new ReflectionClass( $adapter );
+        }catch (ReflectionException){
+            return null;
+        }
+
+
         $instance = $class->newInstanceWithoutConstructor();
         $class->getProperty("handler")->setValue( $instance, $adapter );
         $attr = $adapterClass->getAttributes(JsonAdapter::class);

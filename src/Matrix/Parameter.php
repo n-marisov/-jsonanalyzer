@@ -2,8 +2,6 @@
 
 namespace Maris\JsonAnalyzer\Matrix;
 
-use App\Tests\Pojo\Address;
-use App\Tests\Pojo\Component\Metro;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
 use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use ReflectionException;
@@ -15,6 +13,10 @@ class Parameter extends ReflectionParameter
     public readonly ObjectAnalyzer $analyzer;
     public readonly Type $type;
 
+    /**
+     * @param ReflectionParameter $parameter
+     * @param ObjectAnalyzer $analyzer
+     */
     public function __construct( ReflectionParameter $parameter, ObjectAnalyzer $analyzer )
     {
         $this->analyzer = $analyzer;
@@ -42,28 +44,18 @@ class Parameter extends ReflectionParameter
         $this->type = new Type( $this->getType() );
     }
 
-    /**
-     * Определяет допустипо ли значение
-     * для передачи в качестве параметра
-     * @param mixed $value
-     * @return bool
-     */
-    public function isAvailable( mixed $value ): bool
-    {
-        return $this->type->allowsValue( $value );
-    }
 
     /**
      * Формирует значение на основе
-     * Данных переданых в класс
-     * @param mixed $data если массив создаеем массив $target[]
-     * @param string|null $target если пустой формируем на основании типа данных
+     * Данных переданных в класс
+     * @param mixed $data Если массив создаем массив $target[]
+     * @param string|null $target Если пустой формируем на основании типа данных
+     * @param object|null $parent
      * @return mixed
-     * @throws ReflectionException
      */
     public function createValue( mixed $data , ?string $target = null , ?object $parent =  null):mixed
     {
-        # если массив создаеем массив $target[]
+        # если массив, создаем массив $target[]
         if( is_array($data) ){
             foreach ($data as $key => $value){
                 $data[$key] = $this->createValue( $data, $target, $parent );
@@ -71,7 +63,7 @@ class Parameter extends ReflectionParameter
             return $data;
         }
 
-        # Если не пустой создаем и возврощаем сущность типа $target
+        # Если не пустой создаем и возвращаем сущность типа $target
         if( isset($target) ){
             # Ищем адаптер
             $adapter = $this->analyzer->getTypeAdapter($target);
@@ -79,7 +71,7 @@ class Parameter extends ReflectionParameter
             if(isset($adapter)){
                 return $adapter->fromJson($data);
             }
-            # Если класс существует создаем новую сущность
+            # Если класс существует, создаем новую сущность
             elseif (class_exists($target)){
                 return $this->analyzer->fromJson($data,$target,$parent);
             }
@@ -92,8 +84,8 @@ class Parameter extends ReflectionParameter
             }
         }
 
-        # Пытаемся вычислить $target и запускаем рекурсию
-        # Значит определен один тип
+        # Пытаемся вычислить $target и запускаем рекурсию.
+        # Значит определен один тип.
         if($this->type->isUniquely()){
             $target = $this->type->getTypeName();
             if(isset($target)) return $this->createValue( $data, $target ,$parent);

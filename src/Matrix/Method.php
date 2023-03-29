@@ -55,6 +55,10 @@ class Method extends ReflectionMethod
      */
     protected Type $returned;
 
+    /**
+     * @param ReflectionMethod $method
+     * @param ObjectAnalyzer $analyzer
+     */
     public function __construct( ReflectionMethod $method , ObjectAnalyzer $analyzer )
     {
         $this->analyzer = $analyzer;
@@ -112,7 +116,7 @@ class Method extends ReflectionMethod
         return isset($this->jsonParent);
     }
     /**
-     * Определяет нужно ли печатать обьект
+     * Определяет нужно ли печатать объект
      * @param bool|null $from
      * @param bool|null $to
      * @return bool
@@ -133,7 +137,7 @@ class Method extends ReflectionMethod
         $arguments = [];
         $isValidArguments = true;
 
-        # Если указан ключь переходим на него
+        # Если указан ключ переходим на него
         if(isset( $this->jsonSetter->name )){
             if (!is_object($value)){
                 $this->analyzer->getLogger()?->debug(JsonDebug::SEARCH_KEY_NOT_OBJECT,[
@@ -193,13 +197,6 @@ class Method extends ReflectionMethod
         if($isValidArguments && count($arguments) > 0){
             $this->invokeArgs( $objectOrValue, $arguments );
         }
-    }
-
-    public function invokeGetter( object $instance ):mixed
-    {
-        $value = $this->invoke($instance);
-        if(is_object($value) || is_array($value)) return $this->analyzer->toJson($value);
-        return $value;
     }
 
     public function getJsonName():?string

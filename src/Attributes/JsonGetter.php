@@ -7,7 +7,7 @@ use Maris\JsonAnalyzer\Json;
 
 /**
  * Атрибутом помечаются методы класса
- * которые возврощают значение для
+ * которые возвращают значение для
  * преобразования в json или константы
  */
 #[Attribute( Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_CLASS_CONSTANT )]
@@ -15,7 +15,7 @@ class JsonGetter
 {
     public function __construct(
         /**
-         * Ключь в json
+         * Ключ в json
          * @var string|null $name
          */
         public ?string $name = null,

@@ -2,8 +2,6 @@
 
 namespace Maris\JsonAnalyzer\Tools;
 
-use App\Tests\Pojo\Component\Metro;
-use App\Tests\Pojo\Component\Region;
 use Maris\JsonAnalyzer\Adapters\BoolAdapter;
 use Maris\JsonAnalyzer\Adapters\FloatAdapter;
 use Maris\JsonAnalyzer\Adapters\IntAdapter;
@@ -15,7 +13,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
-use ReflectionException;
 
 /**
  * Главный рабочий класс
@@ -26,14 +23,14 @@ class ObjectAnalyzer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * Хранит с себе все созданые матрици
+     * Хранит с себе все созданные матрицы
      * array< namespace , self >
      * @var array< string, self >
      */
     protected static array $instances = [];
 
     /***
-     * Хранит с себе все адаптеры для преобразоаний
+     * Хранит с себе все адаптеры для преобразований
      * значений
      * @var array< string|class-string, TypeAdapter >
      */
@@ -46,13 +43,13 @@ class ObjectAnalyzer implements LoggerAwareInterface
     public readonly string $namespace;
 
     /**
-     * Хранит в себе все созданые мартицы
+     * Хранит в себе все созданные матрицы
      * @var array< class-string, Matrix >
      */
     protected array $matrix = [];
 
     /**
-     * Фильтр для фильтации по пространству имен
+     * Фильтр для фильтрации по пространству имен
      * @var NamespaceFilter
      */
     public readonly NamespaceFilter $namespaceFilter;
@@ -70,7 +67,6 @@ class ObjectAnalyzer implements LoggerAwareInterface
      * @param class-string $target
      * @param object|null $parent
      * @return array|object|null
-     * @throws ReflectionException
      */
     public function fromJson(object|array $data , string $target , ?object $parent = null):array|object|null
     {
@@ -117,10 +113,9 @@ class ObjectAnalyzer implements LoggerAwareInterface
     }
 
     /**
-     * Возврощает адаптер
+     * Возвращает адаптер
      * @param string $type
      * @return TypeAdapter|null
-     * @throws ReflectionException
      */
     public function getTypeAdapter( string $type ):?TypeAdapter
     {
@@ -153,7 +148,7 @@ class ObjectAnalyzer implements LoggerAwareInterface
     }
 
     /**
-     * Ресистрирует новый адаптер
+     * Регистрирует новый адаптер
      * @param object $adapter
      * @return $this
      */
@@ -173,7 +168,7 @@ class ObjectAnalyzer implements LoggerAwareInterface
                 $this->adapters[ $adapter->getTarget() ] = $adapter;
             }
         }else{
-            $this->logger->warning("Обьект класса \"{class}\" не помечен атрибутом \"{attribute}\" и не является адаптером !",[
+            $this->logger->warning(JsonDebug::NOT_ADAPTERS,[
                 "class"=>$adapter::class,
                 "attribute"=> JsonAdapter::class
             ]);
@@ -211,7 +206,6 @@ class ObjectAnalyzer implements LoggerAwareInterface
      * @param object $data
      * @param Matrix $matrix
      * @return array|null
-     * @throws ReflectionException
      */
     public function toJsonProcess( object $data , Matrix $matrix):array|null
     {
@@ -219,7 +213,7 @@ class ObjectAnalyzer implements LoggerAwareInterface
     }
 
     /**
-     * Возврощает логер
+     * Возвращает логгер
      * @return LoggerInterface|null
      */
     public function getLogger():?LoggerInterface
@@ -228,7 +222,7 @@ class ObjectAnalyzer implements LoggerAwareInterface
     }
 
     /**
-     * Возврощает анализатор привязаный к
+     * Возвращает анализатор привязанный к
      * пространству имен
      * @param string $namespace
      * @return static

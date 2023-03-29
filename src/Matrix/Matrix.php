@@ -10,7 +10,6 @@ use Maris\JsonAnalyzer\Tools\CleanerEmpty;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
 use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use Maris\JsonAnalyzer\Tools\MethodFilter;
-use Maris\JsonAnalyzer\Tools\NamespaceFilter;
 use Maris\JsonAnalyzer\Tools\UniqueFilter;
 use ReflectionClass;
 use ReflectionException;
@@ -18,8 +17,8 @@ use ReflectionMethod;
 use stdClass;
 
 /**
- * Класс представляет из себя матрицу
- * отпечатаную с класса php
+ * Класс представляет собой матрицу,
+ * отпечатанную с класса php
  * @template T
  */
 class Matrix extends ReflectionClass
@@ -122,7 +121,6 @@ class Matrix extends ReflectionClass
      * @param stdClass $data
      * @param object|null $parent
      * @return T
-     * @throws ReflectionException
      */
     public function fromJson( stdClass $data , ?object $parent = null):object
     {
@@ -143,7 +141,7 @@ class Matrix extends ReflectionClass
         }
 
         foreach ( $this->methods as $method ){
-            # Обрабатываем только помеченые методы
+            # Обрабатываем только помеченные методы
             if(!$method->isIgnore( from: false ) && $method->isSetter() ){
                 # Метод помечен атрибутом и допускается игнорированием
                 $method->invokeSetter( $instance, $data, $parent );
@@ -167,12 +165,12 @@ class Matrix extends ReflectionClass
             }else UniqueFilter::add($instance,$instance);
         }
 
-        # Иначе наполняем обьект сами
+        # Иначе наполняем объект сами
         return $instance;
     }
 
     /**
-     * Указывает на наличие свойств помеченых атрибутом JsonParent
+     * Указывает на наличие свойств помеченных атрибутом JsonParent
      * @return bool
      */
     private function existParentProperty():bool
@@ -184,7 +182,6 @@ class Matrix extends ReflectionClass
     /**
      * @param object<T> $instance
      * @return array
-     * @throws ReflectionException
      */
     public function toJson( object $instance ):array
     {
@@ -236,14 +233,14 @@ class Matrix extends ReflectionClass
      */
     private function toJsonDataMerge(array &$data , ?string $key, mixed $value):void
     {
-        # Если ключь отсутствует обьединяем с текущим массивом
+        # Если ключ отсутствует объединяем с текущим массивом
         if(!isset($key) && is_array($value) ) $data = array_merge( $data, $value );
         elseif( isset($key) ){
-            # Если данные в указаном ключе не существуют
+            # Если данные в указанном ключе не существуют
             if(!isset($data[$key])){
                 $data[$key] = $value;
             }
-            # Если в данном ключе массив и текущие данные массив (и не лист) обьединяем
+            # Если в данном ключе массив и текущие данные массив (и не лист) объединяем
             elseif( is_array($data[$key]) && is_array($value) && !array_is_list($value)){
                 $data[$key] = array_merge($data[$key],$value);
             }

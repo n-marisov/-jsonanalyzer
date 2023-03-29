@@ -43,7 +43,7 @@ class Json
     }
 
     /**
-     * Устанавливает логеры
+     * Устанавливает логер
      * @param LoggerInterface $logger
      * @param string|array $namespaces
      * @return void
