@@ -1,6 +1,8 @@
 <?php
 
 namespace Maris\JsonAnalyzer\Matrix;
+
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Attributes\FromJson;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonObject;
@@ -8,7 +10,6 @@ use Maris\JsonAnalyzer\Attributes\JsonParent;
 use Maris\JsonAnalyzer\Attributes\ToJson;
 use Maris\JsonAnalyzer\Tools\CleanerEmpty;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
-use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use Maris\JsonAnalyzer\Tools\MethodFilter;
 use Maris\JsonAnalyzer\Tools\UniqueFilter;
 use ReflectionClass;
@@ -25,9 +26,9 @@ class Matrix extends ReflectionClass
 {
     /**
      * Родительский анализатор
-     * @var ObjectAnalyzer
+     * @var Analyzer
      */
-    public ObjectAnalyzer $analyzer;
+    public Analyzer $analyzer;
     /**
      * Атрибут
      * @var JsonIgnore|null
@@ -70,9 +71,9 @@ class Matrix extends ReflectionClass
 
     /**
      * @param class-string $objectOrClass
-     * @param ObjectAnalyzer $analyzer
+     * @param Analyzer $analyzer
      */
-    public function __construct( string $objectOrClass , ObjectAnalyzer $analyzer )
+    public function __construct( string $objectOrClass , Analyzer $analyzer )
     {
         $this->analyzer = $analyzer;
 

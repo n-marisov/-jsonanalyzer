@@ -3,18 +3,18 @@
 namespace Maris\JsonAnalyzer\Matrix;
 
 use JetBrains\PhpStorm\Pure;
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Attributes\JsonGetter;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
-use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use ReflectionClassConstant;
 
 class Constant extends ReflectionClassConstant
 {
     /**
      * Родительский анализатор
-     * @var ObjectAnalyzer
+     * @var Analyzer
      */
-    public ObjectAnalyzer $analyzer;
+    public Analyzer $analyzer;
     /**
      * Атрибут
      * @var JsonIgnore|null
@@ -27,7 +27,7 @@ class Constant extends ReflectionClassConstant
      */
     protected ?JsonGetter $jsonGetter;
 
-    public function __construct( ReflectionClassConstant $constant, ObjectAnalyzer $analyzer )
+    public function __construct( ReflectionClassConstant $constant, Analyzer $analyzer )
     {
         parent::__construct( $constant->class, $constant->name );
 

@@ -3,13 +3,12 @@
 namespace Maris\JsonAnalyzer\Matrix;
 
 
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Attributes\JsonGetter;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonParent;
 use Maris\JsonAnalyzer\Attributes\JsonSetter;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
-use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
-
 use ReflectionException;
 use ReflectionMethod;
 
@@ -17,9 +16,9 @@ class Method extends ReflectionMethod
 {
     /**
      * Родительский анализатор
-     * @var ObjectAnalyzer
+     * @var Analyzer
      */
-    public ObjectAnalyzer $analyzer;
+    public Analyzer $analyzer;
     /**
      * Атрибут
      * @var JsonIgnore|null
@@ -57,9 +56,9 @@ class Method extends ReflectionMethod
 
     /**
      * @param ReflectionMethod $method
-     * @param ObjectAnalyzer $analyzer
+     * @param Analyzer $analyzer
      */
-    public function __construct( ReflectionMethod $method , ObjectAnalyzer $analyzer )
+    public function __construct( ReflectionMethod $method , Analyzer $analyzer )
     {
         $this->analyzer = $analyzer;
         $this->ignore = $analyzer->namespaceFilter->filtered($method->getAttributes(JsonIgnore::class));

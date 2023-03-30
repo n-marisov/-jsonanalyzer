@@ -1,7 +1,9 @@
 <?php
 
+
 use App\Tests\CustomerAdapters\DateTimeZoneAdapter;
 use App\Tests\Pojo\Address;
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Json;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Level;
@@ -24,6 +26,37 @@ $logger->pushHandler(new BrowserConsoleHandler(Level::Debug ));
 $logger->pushProcessor( new PsrLogMessageProcessor() );
 
 
+
+$analyzerSuggestions = new Analyzer("SUGGESTIONS");
+$analyzerClean = new Analyzer("CLEAN");
+
+$analyzerSuggestions->registeredAdapter(DateTimeZone::class , new DateTimeZoneAdapter() );
+$analyzerClean->registeredAdapter(DateTimeZone::class , new DateTimeZoneAdapter() );
+
+$analyzerSuggestions->setLogger($logger);
+$analyzerClean->setLogger($logger);
+
+$fromSuggestions = $analyzerSuggestions->fromArray(json_decode( $suggestions ,1),Address::class);
+$fromClean = $analyzerClean->fromArray(json_decode( $clean ),Address::class);
+
+dump( $fromSuggestions );
+dump( $fromClean );
+
+dump($analyzerSuggestions->toArray($fromSuggestions));
+dump($analyzerClean->toArray($fromClean));
+
+
+dump(Json::decode($suggestions,Address::class,"SUGGESTIONS"));
+dump(Json::encode($fromSuggestions,"SUGGESTIONS"));
+
+
+/*$logger = new Logger("test");
+# Отображение ошибок в консоли браузера
+$logger->pushHandler(new BrowserConsoleHandler(Level::Debug ));
+# Встроенный процессор обрабатывающий плейсхолдеры
+$logger->pushProcessor( new PsrLogMessageProcessor() );
+
+
 Json::initLogger( $logger, ["SUGGESTIONS","CLEAN"] );
 Json::registeredAdapter( new DateTimeZoneAdapter(), ["SUGGESTIONS","CLEAN"] );
 
@@ -40,4 +73,4 @@ $clean_encode = Json::encode( $suggestions_decode ,"CLEAN") ;
 
 
 dump( json_decode( $suggestions_encode ) );
-dump( json_decode( $clean_encode ) );
+dump( json_decode( $clean_encode ) );*/

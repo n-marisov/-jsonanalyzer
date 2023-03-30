@@ -2,27 +2,33 @@
 
 namespace Maris\JsonAnalyzer\Adapters;
 
-use Maris\JsonAnalyzer\Attributes\FromJson;
-use Maris\JsonAnalyzer\Attributes\JsonAdapter;
-use Maris\JsonAnalyzer\Attributes\ToJson;
+
+use Maris\JsonAnalyzer\Interfaces\JsonAdapterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
-#[JsonAdapter(target: "float")]
-class FloatAdapter implements LoggerAwareInterface
+class FloatAdapter implements JsonAdapterInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    #[ToJson]
-    public function toFloat( ?float $data ):?float
+    public function __construct( ?LoggerInterface $logger = null)
     {
-        return $data;
+        $this->logger = $logger;
+    }
+    public function fromJson(mixed $data, string $namespace): ?float
+    {
+        if(is_object($data) && method_exists($data,"__toString"))
+            $data = (string)$data;
+        if(!is_numeric($data)){
+            $this->logger->debug("Не является числом");
+            return null;
+        }
+        return (float)$data;
     }
 
-    #[FromJson]
-    public function fromFloat( string|int|float|bool|null $data ):?float
+    public function toJson(mixed $data, string $namespace): mixed
     {
-        if(is_string($data) && !is_numeric($data)) return null;
-        return (float) $data;
+        return $data;
     }
 }

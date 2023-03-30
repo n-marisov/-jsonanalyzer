@@ -2,11 +2,12 @@
 
 namespace Maris\JsonAnalyzer\Matrix;
 
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonParent;
 use Maris\JsonAnalyzer\Attributes\JsonProperty;
+use Maris\JsonAnalyzer\Exceptions\NotFoundException;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
-use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use ReflectionException;
 use ReflectionProperty;
 
@@ -14,9 +15,9 @@ class Property extends ReflectionProperty
 {
     /**
      * Родительский анализатор
-     * @var ObjectAnalyzer
+     * @var Analyzer
      */
-    public readonly ObjectAnalyzer $analyzer;
+    public readonly Analyzer $analyzer;
     /**
      * Атрибут
      * @var JsonIgnore|null
@@ -42,9 +43,9 @@ class Property extends ReflectionProperty
 
     /**
      * @param ReflectionProperty $property
-     * @param ObjectAnalyzer $analyzer
+     * @param Analyzer $analyzer
      */
-    public function __construct( ReflectionProperty $property , ObjectAnalyzer $analyzer )
+    public function __construct( ReflectionProperty $property , Analyzer $analyzer )
     {
         $this->analyzer = $analyzer;
         $this->ignore = $analyzer->namespaceFilter->filtered($property->getAttributes(JsonIgnore::class));
@@ -135,18 +136,30 @@ class Property extends ReflectionProperty
 
         # Если указан $target ищем адаптер
         $target = $this->jsonProperty->target ?? $this->type->getTypeName();
-        $adapter = $this->analyzer->getTypeAdapter( $target );
+        //$adapter = $this->analyzer->getTypeAdapter( $target );
         # Если есть адаптер передаем ему
-        if(isset($adapter)){
+        /*if(isset($adapter)){
             if(is_object($value)) $value = (array)$value;
             $value = $adapter->fromJson( $value );
+        }*/
+
+
+        if($this->analyzer->adapters->has($target)){
+            try {
+                $adapter = $this->analyzer->adapters->get($target);
+                if(is_object($value)) $value = (array)$value;
+                $value = $adapter->fromJson( $value ,$this->analyzer->namespace);
+            } catch (NotFoundException $e) {
+                $this->analyzer->getLogger()->error( $e->getMessage() );
+            }
         }
+
 
         # Если тип один
         if( $this->type->isUniquely() ){
             if(is_object($value)){
                 $target = $this->jsonProperty->target ?? $this->type->getTypeName();
-                $value = $this->analyzer->fromJson( $value, $target , $objectOrValue );
+                $value = $this->analyzer->fromArray( $value, $target , $objectOrValue );
             }
         }elseif ( !isset($target) ) $this->analyzer->getLogger()?->debug(JsonDebug::PROPERTY_TYPE_AMBIGUITY,[
             "class"=>$this->class,
@@ -186,14 +199,19 @@ class Property extends ReflectionProperty
         }
         $value = parent::getValue( $object );
         if(isset($this->jsonProperty?->target)){
-            $adapter = $this->analyzer->getTypeAdapter($this->jsonProperty?->target);
-            if(isset($adapter))
-                return $adapter->toJson($value);
+            if($this->analyzer->adapters->has($this->jsonProperty?->target))
+                try {
+                    return $this->analyzer->adapters
+                        ->get($this->jsonProperty?->target)
+                        ?->toJson($value, $this->analyzer->namespace);
+                } catch (NotFoundException $e) {
+                    $this->analyzer->getLogger()?->error($e);
+                }
         }
 
-        if(is_object($value)) return $this->analyzer->toJson($value);
+        if(is_object($value)) return $this->analyzer->toArray($value);
         if(is_array($value)) foreach ($value as $k => $v ){
-            $value[$k] = $this->analyzer->toJson($v);
+            $value[$k] = $this->analyzer->toArray($v);
         }
         return $value;
     }

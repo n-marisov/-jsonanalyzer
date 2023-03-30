@@ -47,7 +47,7 @@ class Address
     #[JsonProperty(name: "data", namespace: "SUGGESTIONS")]
     #[JsonProperty( namespace: "CLEAN")]
     public Region $region;
-/*
+
     #[JsonProperty(name: "data", namespace: "SUGGESTIONS")]
     #[JsonProperty( namespace: "CLEAN")]
     private Area $area;
@@ -60,20 +60,19 @@ class Address
    #[JsonProperty( name: "data", target: DateTimeZone::class, namespace: "SUGGESTIONS")]
    #[JsonProperty( target: DateTimeZone::class, namespace: "CLEAN" )]
     private array $timezone;
-*/
+
     private ?Coordinate $location;
 
     /**
-     * Если $target не указан то принимает
+     * Если $target не указан, то принимает
      * весь массив с исходными данными
      * @param array $data
      * @return $this
      */
     #[JsonSetter( name: "data", namespace: "SUGGESTIONS" )]
     #[JsonSetter( namespace: "CLEAN")]
-    public function setLocation( Polygon|Coordinate|array $data ): self
+    public function setLocation( array $data ): self
     {
-        //$this->location = new Coordinate( $data->geo_lat, $data->geo_lon );
         if(isset($data["qc_geo"]) && $data["qc_geo"] < 5 ){
             $this->location = new Coordinate($data["geo_lat"],$data["geo_lon"]);
         }else $this->location = null;
@@ -83,7 +82,7 @@ class Address
     /**
      * @return Coordinate|null
      */
- /*   #[JsonGetter(name: "data",namespace: "SUGGESTIONS")]
+    #[JsonGetter(name: "data",namespace: "SUGGESTIONS")]
     #[JsonGetter(namespace: "CLEAN")]
     private function getLocationJson(): ?array
     {

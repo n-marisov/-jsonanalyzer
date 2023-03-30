@@ -20,7 +20,7 @@ class JsonDebug
 
     const UNIQUE_CONFLICT_PARENT = "В классе \"{class}\", в пространстве имен \"{namespace}\", есть свойства которые помечены атрибутом \"{attribute}\" уникальность не задействована на данном классе .";
 
-    const PROPERTY_INVALID_TYPE = "В классе \"{class}\", объявленный тип данных свойства \"{property}\" не позволяет записать тип \"{type}\" в пространстве имен \"{namespace}\" .";
+    const PROPERTY_INVALID_TYPE = "В классе \"{class}\", объявленный тип данных свойства \"\${property}\" не позволяет записать тип \"{type}\" в пространстве имен \"{namespace}\" .";
 
     const PROPERTY_TYPE_AMBIGUITY = "Найдена неоднозначность в классе \"{class}\" , свойстве \"{property}\" скорее всего не указан параметр \"{parameter}\" в пространстве имен \"{namespace}\"";
 

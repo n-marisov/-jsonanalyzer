@@ -2,25 +2,26 @@
 
 namespace Maris\JsonAnalyzer\Adapters;
 
-use Maris\JsonAnalyzer\Attributes\FromJson;
+
 use Maris\JsonAnalyzer\Attributes\JsonAdapter;
-use Maris\JsonAnalyzer\Attributes\ToJson;
+use Maris\JsonAnalyzer\Interfaces\JsonAdapterInterface;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 #[JsonAdapter(target: "string")]
-class StringAdapter implements LoggerAwareInterface
+class StringAdapter implements JsonAdapterInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
-    #[ToJson]
-    public function toString( ?string $data ):?string
+
+
+    public function __construct( ?LoggerInterface $logger = null)
     {
-        return $data;
+        $this->logger = $logger;
     }
 
-    #[FromJson]
-    public function fromString( mixed $data ):?string
+    public function fromJson(mixed $data, string $namespace): ?string
     {
         if(is_object($data)){
             if(!method_exists($data,"__toString")){
@@ -33,5 +34,10 @@ class StringAdapter implements LoggerAwareInterface
         }
         elseif (is_array($data)) return json_encode($data);
         return (string) $data;
+    }
+
+    public function toJson(mixed $data, string $namespace): mixed
+    {
+        return $data;
     }
 }

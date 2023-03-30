@@ -5,24 +5,33 @@ namespace Maris\JsonAnalyzer\Adapters;
 use Maris\JsonAnalyzer\Attributes\FromJson;
 use Maris\JsonAnalyzer\Attributes\JsonAdapter;
 use Maris\JsonAnalyzer\Attributes\ToJson;
+use Maris\JsonAnalyzer\Interfaces\JsonAdapterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 #[JsonAdapter(target: "int")]
-class IntAdapter implements LoggerAwareInterface
+class IntAdapter implements JsonAdapterInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    #[ToJson]
-    public function toInt( ?int $data ):?int
+    public function __construct( ?LoggerInterface $logger = null)
     {
-        return $data;
+        $this->logger = $logger;
+    }
+    public function fromJson(mixed $data, string $namespace): ?float
+    {
+        if (is_object($data) && method_exists($data, "__toString"))
+            $data = (string)$data;
+        if (!is_numeric($data)) {
+            $this->logger->debug("Не является числом");
+            return null;
+        }
+        return (int)$data;
     }
 
-    #[FromJson]
-    public function fromInt( string|int|float|bool $data ):?int
+    public function toJson(mixed $data, string $namespace): mixed
     {
-        if(is_string($data) && !is_numeric($data)) return null;
-        return (int) $data;
+        return $data;
     }
 }
