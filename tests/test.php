@@ -1,8 +1,10 @@
 <?php
 
+
 use App\Tests\CustomerAdapters\DateTimeZoneAdapter;
 use App\Tests\Pojo\Address;
-use Maris\JsonAnalyzer\Json;
+use Maris\JsonAnalyzer\Analyzer;
+use Maris\JsonAnalyzer\Event\UniqueFilter;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Level;
 use Monolog\Logger;
@@ -24,20 +26,47 @@ $logger->pushHandler(new BrowserConsoleHandler(Level::Debug ));
 $logger->pushProcessor( new PsrLogMessageProcessor() );
 
 
-Json::initLogger( $logger, ["SUGGESTIONS","CLEAN"] );
-Json::registeredAdapter( new DateTimeZoneAdapter(), ["SUGGESTIONS","CLEAN"] );
+
+$analyzerSuggestions = new Analyzer("SUGGESTIONS");
+$analyzerClean = new Analyzer("CLEAN");
+
+$analyzerSuggestions->registeredAdapter(DateTimeZone::class , new DateTimeZoneAdapter() );
+$analyzerClean->registeredAdapter(DateTimeZone::class , new DateTimeZoneAdapter() );
+
+$analyzerSuggestions->setLogger($logger);
+$analyzerClean->setLogger($logger);
 
 
-$suggestions_decode = Json::decode($suggestions,Address::class,"SUGGESTIONS");
-$clean_decode = Json::decode($clean,Address::class,"CLEAN");
+function uniqueFilter ( UniqueFilter $event ): void
+{
+   if(!$event->isModifyResult())
+       $event->setResult( $event->getOriginal() );
+}
 
-dump( $suggestions_decode );
-dump( $clean_decode );
+$analyzerSuggestions->addEventListener(UniqueFilter::class,"uniqueFilter");
+$analyzerClean->addEventListener(UniqueFilter::class,"uniqueFilter");
 
 
-$suggestions_encode = Json::encode( $suggestions_decode ,"SUGGESTIONS");
-$clean_encode = Json::encode( $suggestions_decode ,"CLEAN") ;
+
+$fromSuggestions = $analyzerSuggestions->fromArray(json_decode( $suggestions ,1),Address::class);
+$fromClean = $analyzerClean->fromArray(json_decode( $clean ),Address::class);
+
+dump( $fromSuggestions );
+dump( $fromClean );
+
+/*dump($analyzerSuggestions->toArray($fromSuggestions));
+dump($analyzerClean->toArray($fromClean));
 
 
-dump( json_decode( $suggestions_encode ) );
-dump( json_decode( $clean_encode ) );
+dump(Json::decode($suggestions,Address::class,"SUGGESTIONS"));
+dump(Json::encode($fromSuggestions,"SUGGESTIONS"));*/
+
+
+/*$dispatcher = new Dispatcher();
+$dispatcher->provider->addListener(UniqueFilter::class , function ( UniqueFilter $event ){
+    if(!$event->isModifyResult())
+        $event->setResult( new stdClass() );
+});
+
+
+dump( $dispatcher->dispatch( new UniqueFilter( new Address() ) )->getResult() );*/

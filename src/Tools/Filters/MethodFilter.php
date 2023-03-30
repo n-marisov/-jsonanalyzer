@@ -1,6 +1,6 @@
 <?php
 
-namespace Maris\JsonAnalyzer\Tools;
+namespace Maris\JsonAnalyzer\Tools\Filters;
 
 use ReflectionClass;
 use ReflectionMethod;

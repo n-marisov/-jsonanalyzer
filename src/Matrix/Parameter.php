@@ -2,22 +2,22 @@
 
 namespace Maris\JsonAnalyzer\Matrix;
 
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
-use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
 use ReflectionException;
 use ReflectionParameter;
 
 class Parameter extends ReflectionParameter
 {
 
-    public readonly ObjectAnalyzer $analyzer;
+    public readonly Analyzer $analyzer;
     public readonly Type $type;
 
     /**
      * @param ReflectionParameter $parameter
-     * @param ObjectAnalyzer $analyzer
+     * @param Analyzer $analyzer
      */
-    public function __construct( ReflectionParameter $parameter, ObjectAnalyzer $analyzer )
+    public function __construct( ReflectionParameter $parameter, Analyzer $analyzer )
     {
         $this->analyzer = $analyzer;
 
@@ -66,14 +66,20 @@ class Parameter extends ReflectionParameter
         # Если не пустой создаем и возвращаем сущность типа $target
         if( isset($target) ){
             # Ищем адаптер
-            $adapter = $this->analyzer->getTypeAdapter($target);
+           /* $adapter = $this->analyzer->getTypeAdapter($target);
             # Если есть адаптер передаем ему
             if(isset($adapter)){
                 return $adapter->fromJson($data);
+            }*/
+
+            # Если есть адаптер передаем ему
+            if($this->analyzer->adapters->has($target)){
+                return $this->analyzer->adapters->get($target)?->fromJson( $data, $this->analyzer->namespace );
             }
+
             # Если класс существует, создаем новую сущность
             elseif (class_exists($target)){
-                return $this->analyzer->fromJson($data,$target,$parent);
+                return $this->analyzer->fromArray($data,$target,$parent);
             }
             elseif ($target === "array"){
                 return (array)$data;

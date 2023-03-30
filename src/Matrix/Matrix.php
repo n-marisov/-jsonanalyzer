@@ -1,20 +1,23 @@
 <?php
 
 namespace Maris\JsonAnalyzer\Matrix;
+
+use Maris\JsonAnalyzer\Analyzer;
 use Maris\JsonAnalyzer\Attributes\FromJson;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonObject;
 use Maris\JsonAnalyzer\Attributes\JsonParent;
 use Maris\JsonAnalyzer\Attributes\ToJson;
+use Maris\JsonAnalyzer\Event\UniqueFilter;
 use Maris\JsonAnalyzer\Tools\CleanerEmpty;
+use Maris\JsonAnalyzer\Tools\Filters\MethodFilter;
 use Maris\JsonAnalyzer\Tools\JsonDebug;
-use Maris\JsonAnalyzer\Tools\ObjectAnalyzer;
-use Maris\JsonAnalyzer\Tools\MethodFilter;
-use Maris\JsonAnalyzer\Tools\UniqueFilter;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use stdClass;
+
+//use Maris\JsonAnalyzer\Tools\UniqueFilter;
 
 /**
  * Класс представляет собой матрицу,
@@ -25,9 +28,9 @@ class Matrix extends ReflectionClass
 {
     /**
      * Родительский анализатор
-     * @var ObjectAnalyzer
+     * @var Analyzer
      */
-    public ObjectAnalyzer $analyzer;
+    public Analyzer $analyzer;
     /**
      * Атрибут
      * @var JsonIgnore|null
@@ -70,9 +73,9 @@ class Matrix extends ReflectionClass
 
     /**
      * @param class-string $objectOrClass
-     * @param ObjectAnalyzer $analyzer
+     * @param Analyzer $analyzer
      */
-    public function __construct( string $objectOrClass , ObjectAnalyzer $analyzer )
+    public function __construct( string $objectOrClass , Analyzer $analyzer )
     {
         $this->analyzer = $analyzer;
 
@@ -200,9 +203,16 @@ class Matrix extends ReflectionClass
                 return $instance;
             }
 
-            if( ($filter =  UniqueFilter::get($instance)) !== false ){
-                $instance = $filter->getResult();
-            }else UniqueFilter::add($instance,$instance);
+            $provider = $this->analyzer->eventDispatcher->provider;
+
+            if($provider->listenerExists(UniqueFilter::class)){
+                $events = $provider->getChildrenClasses(UniqueFilter::class);
+                foreach ($events as $event)
+                    $instance = $this->analyzer->eventDispatcher
+                        ->dispatch(new $event($instance))->getResult();
+            }else{
+                $instance = (new UniqueFilter($instance))->getResult();
+            }
         }
 
         # Иначе наполняем объект сами

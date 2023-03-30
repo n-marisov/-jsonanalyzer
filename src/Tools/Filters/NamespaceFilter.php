@@ -1,6 +1,6 @@
 <?php
 
-namespace Maris\JsonAnalyzer\Tools;
+namespace Maris\JsonAnalyzer\Tools\Filters;
 
 use ReflectionAttribute;
 
@@ -27,7 +27,7 @@ class NamespaceFilter
      */
     public function filtered ( array $attributes ):?object
     {
-        $attributes = array_values( array_filter( $attributes, $this ) );
+        $attributes = array_values( array_filter( $attributes, [$this,"process"] ) );
         return array_pop($attributes)?->newInstance();
     }
 
@@ -35,7 +35,7 @@ class NamespaceFilter
      * @param ReflectionAttribute $attribute
      * @return bool
      */
-    public function __invoke( ReflectionAttribute $attribute ):bool
+    public function process( ReflectionAttribute $attribute ):bool
     {
         return $this->namespace === $attribute->newInstance()?->namespace;
     }
