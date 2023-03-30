@@ -14,7 +14,8 @@ class TimingHelper {
         $this->start = microtime(true);
     }
 
-    public function segs() {
+    public function segs():int
+    {
         return microtime(true) - $this->start;
     }
 

@@ -39,4 +39,8 @@ class JsonDebug
     const RUNTIME_ADAPTER_EXCEPTION = "Ошибка адаптера \"{target}\".В методе \"{method}\". В пространстве имен \"{namespace}\"";
 
     const NOT_ADAPTERS = "Объект класса \"{class}\" не помечен атрибутом \"{attribute}\" и не является адаптером !";
+
+    const ERROR_NEW_INSTANCE_WITHOUT_CONSTRUCTOR = "Ошибка создания экземпляра класса \"{class}\".В пространстве имен \"{namespace}\".";
+
+    const ERROR_INVOKE_METHOD = "Ошибка вызова метода {method}. В классе \"{class}\".В пространстве имен \"{namespace}\".";
 }

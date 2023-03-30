@@ -123,25 +123,25 @@ class ObjectAnalyzer implements LoggerAwareInterface
             $adapter = new StringAdapter();
             if( isset($this->logger) && is_a($adapter,LoggerAwareInterface::class) )
                 $adapter->setLogger( $this->logger );
-            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter );
+            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter, $this );
         }
         if($type === "float" && !isset($this->adapters[$type])){
             $adapter = new FloatAdapter();
             if(isset($this->logger) && is_a($adapter,LoggerAwareInterface::class))
                 $adapter->setLogger( $this->logger );
-            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter );
+            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter, $this);
         }
         if($type === "int" && !isset($this->adapters[$type])){
             $adapter = new IntAdapter();
             if(isset($this->logger) && is_a($adapter,LoggerAwareInterface::class))
                 $adapter->setLogger( $this->logger );
-            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter );
+            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter, $this );
         }
         if($type === "bool" && !isset($this->adapters[$type])){
             $adapter = new BoolAdapter();
             if(isset($this->logger) && is_a($adapter,LoggerAwareInterface::class))
                 $adapter->setLogger( $this->logger );
-            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter );
+            $this->adapters[$type] = TypeAdapter::newDefaultInstance( $adapter, $this );
         }
 
         return (isset($this->adapters[$type])) ? $this->adapters[$type] : null;

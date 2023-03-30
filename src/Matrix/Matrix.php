@@ -120,16 +120,43 @@ class Matrix extends ReflectionClass
     /**
      * @param stdClass $data
      * @param object|null $parent
-     * @return T
+     * @return object|null
      */
-    public function fromJson( stdClass $data , ?object $parent = null):object
+    public function fromJson( stdClass $data , ?object $parent = null):?object
     {
 
-        $instance = $this->newInstanceWithoutConstructor();
+        try {
+            $instance = $this->newInstanceWithoutConstructor();
+        } catch (ReflectionException $e) {
+            $this->analyzer->getLogger()->error(JsonDebug::ERROR_NEW_INSTANCE_WITHOUT_CONSTRUCTOR,[
+                "class"=>$this->getName(),
+                "namespace"=>$this->analyzer->namespace,
+                "exception"=>[
+                    "message"=>$e->getMessage(),
+                    "code"=>$e->getCode(),
+                    "trace"=>$e->getTrace()
+                ]
+            ]);
+            return null;
+        }
         # Если определен метод fromJson передаем ему
         if( isset($this->fromJsonMethod) ){
 
-            $this->fromJsonMethod->invoke( $instance, (array)$data , $parent);
+            try {
+                $this->fromJsonMethod->invoke($instance, (array)$data, $parent);
+            } catch (ReflectionException $e) {
+                $this->analyzer->getLogger()->error(JsonDebug::ERROR_INVOKE_METHOD,[
+                    "class"=>$this->fromJsonMethod->getDeclaringClass(),
+                    "method"=>$this->fromJsonMethod->getName(),
+                    "namespace"=>$this->analyzer->namespace,
+                    "exception"=>[
+                        "message"=>$e->getMessage(),
+                        "code"=>$e->getCode(),
+                        "trace"=>$e->getTrace()
+                    ]
+                ]);
+                return null;
+            }
             return $instance;
         }
 
@@ -144,7 +171,20 @@ class Matrix extends ReflectionClass
             # Обрабатываем только помеченные методы
             if(!$method->isIgnore( from: false ) && $method->isSetter() ){
                 # Метод помечен атрибутом и допускается игнорированием
-                $method->invokeSetter( $instance, $data, $parent );
+                try {
+                    $method->invokeSetter($instance, $data, $parent);
+                } catch (ReflectionException $e) {
+                    $this->analyzer->getLogger()->error(JsonDebug::ERROR_INVOKE_METHOD,[
+                        "class"=>$this->getName(),
+                        "method"=>"invokeSetter",
+                        "namespace"=>$this->analyzer->namespace,
+                        "exception"=>[
+                            "message"=>$e->getMessage(),
+                            "code"=>$e->getCode(),
+                            "trace"=>$e->getTrace()
+                        ]
+                    ]);
+                }
             }
         }
 
@@ -195,7 +235,20 @@ class Matrix extends ReflectionClass
                     "namespace"=>$this->analyzer->namespace
                 ]);
                 return [];
-            } else return $this->toJsonMethod->invoke( $instance );
+            } else try {
+                return $this->toJsonMethod->invoke($instance);
+            } catch (ReflectionException $e) {
+                $this->analyzer->getLogger()->error(JsonDebug::ERROR_INVOKE_METHOD,[
+                    "class"=>$this->toJsonMethod->getDeclaringClass(),
+                    "method"=>$this->toJsonMethod->getName(),
+                    "namespace"=>$this->analyzer->namespace,
+                    "exception"=>[
+                        "message"=>$e->getMessage(),
+                        "code"=>$e->getCode(),
+                        "trace"=>$e->getTrace()
+                    ]
+                ]);
+            }
         }
 
         $data = [];
@@ -213,7 +266,20 @@ class Matrix extends ReflectionClass
         foreach ( $this->methods as $method )
             # Свойство помечено атрибутом и допускается игнорированием
             if( !$method->isIgnore( to: false ) && $method->isGetter() ){
-                $this->toJsonDataMerge($data, $method->getJsonName(), $method->invoke( $instance ) );
+                try {
+                    $this->toJsonDataMerge($data, $method->getJsonName(), $method->invoke($instance));
+                } catch (ReflectionException $e) {
+                    $this->analyzer->getLogger()->error(JsonDebug::ERROR_INVOKE_METHOD,[
+                        "class"=>$method->getDeclaringClass(),
+                        "method"=>$method->getName(),
+                        "namespace"=>$this->analyzer->namespace,
+                        "exception"=>[
+                            "message"=>$e->getMessage(),
+                            "code"=>$e->getCode(),
+                            "trace"=>$e->getTrace()
+                        ]
+                    ]);
+                }
             }
 
 

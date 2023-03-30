@@ -123,20 +123,28 @@ class TypeAdapter
     /**
      * Формирует адаптер по умолчанию
      * @param object $adapter
+     * @param ObjectAnalyzer $analyzer
      * @return static|null
-     * @throws ReflectionException
      */
-    public static function newDefaultInstance( object $adapter ):?self
+    public static function newDefaultInstance( object $adapter, ObjectAnalyzer $analyzer ):?self
     {
+        $class = new ReflectionClass(self::class);
+        $adapterClass = new ReflectionClass( $adapter );
+
         try {
-            $class = new ReflectionClass(self::class);
-            $adapterClass = new ReflectionClass( $adapter );
-        }catch (ReflectionException){
+            $instance = $class->newInstanceWithoutConstructor();
+        } catch (ReflectionException $e) {
+            $analyzer->getLogger()->error(JsonDebug::ERROR_NEW_INSTANCE_WITHOUT_CONSTRUCTOR,[
+                "class"=>$class->getName(),
+                "namespace"=>$analyzer->namespace,
+                "exception"=>[
+                    "message"=>$e->getMessage(),
+                    "code"=>$e->getCode(),
+                    "trace"=>$e->getTrace()
+                ]
+            ]);
             return null;
         }
-
-
-        $instance = $class->newInstanceWithoutConstructor();
         $class->getProperty("handler")->setValue( $instance, $adapter );
         $attr = $adapterClass->getAttributes(JsonAdapter::class);
         if(empty($attr)) return null;
