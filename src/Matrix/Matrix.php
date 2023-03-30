@@ -1,6 +1,7 @@
 <?php
 
 namespace Maris\JsonAnalyzer\Matrix;
+
 use Maris\JsonAnalyzer\Attributes\FromJson;
 use Maris\JsonAnalyzer\Attributes\JsonIgnore;
 use Maris\JsonAnalyzer\Attributes\JsonObject;
